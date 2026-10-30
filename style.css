@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Antonio:wght@100..700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+body{
+    font-family: Antonio, Arial, Helvetica, sans-serif;
+    font-size: 16pt;
+    font-weight: 140;
+}
+
+.navbar{
+    display: flex;
+    align-items: center;
+    background-color: #0D131A;
+    color: #F9FAFB;
+}
