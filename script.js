@@ -5,6 +5,13 @@ const logAPI_URL = 'https://6ae0f23bbe3bc8fead981c0b.mockapi.io/eventLog';
 
 const start = new Date("2026-10-24T00:00:00");
 const now = new Date(Date.now());
+now.setDate(start.getDate());
+now.setMonth(start.getMonth());
+now.setFullYear(start.getFullYear());
+now.setMilliseconds(0);
+now.setSeconds(0);
+now.setMinutes(0);
+now.setHours(22); // For testing, Remove.
 const yesterday = new Date(start);
 yesterday.setDate(yesterday.getDate() - 1);
 const dayBefore = new Date(yesterday);
@@ -12,7 +19,7 @@ dayBefore.setDate(dayBefore.getDate() - 1);
 console.log(`Today: ${start.toLocaleString()}`);
 console.log(`yesterday: ${yesterday.toLocaleString()}`);
 console.log(`Day Before: ${dayBefore.toLocaleString()}`);
-console.log(`Now: ${now.toLocaleTimeString()}`);
+console.log(`Now: ${now.toLocaleString()}`);
 // const today = start.toISOString().slice(0,10);
 // console.log(today);
 // const nowTime = start.toISOString().slice(11,19);
@@ -54,7 +61,13 @@ async function initPage(){
 function popChart(){
     /**
      * Populate the chart with the data from API production data.
+     * Code and Examples from: https://www.w3schools.com/js/tryit.asp?filename=tryai_chartjs_lines
+     * and https://www.w3schools.com/ai/ai_chartjs.asp used for reference to build chart population.
      */
+     
+    const chartData = [];
+    const chartLabels = [];
+    const ctx = document.getElementById('myChart');
     apiObj.prodData.forEach(hourData => {
         // dateTime = hourData.timeStamp.slice(0,10);
         // hourTime = hourData.timeStamp.slice(11);
@@ -67,26 +80,69 @@ function popChart(){
         // Calculate the date/times for the start and end of shift.
         const shiftStart = new Date(start);
         const shiftEnd = new Date(start);
-        if(8 < now.getHours() < 20){ // Day Shift
+        if( now.getHours() >= 8 && now.getHours() < 20){ // Day Shift
             shiftStart.setHours(8);
             shiftEnd.setHours(20);
         }
         else if( now.getHours()<8 ){ // 2nd half of night shift
             shiftEnd.setHours(8);
-            shiftStart.setHours(19);
+            shiftStart.setHours(20);
             shiftStart.setDate(shiftStart.getDate()-1);
         }
         else{ // 1st half of night shift
             shiftEnd.setHours(8);
-            shiftStart.setHours(19);
+            shiftStart.setHours(20);
             shiftEnd.setDate(shiftEnd.getDate()+1);
         }
+        
+        //Get the hours related to the shift start and end date.
         const thisData = apiDataToDateObj(hourData);
-        if (shiftEnd.getDate() >= thisData.getDate() > shiftStart.getDate())
-            console.log(thisData.toLocaleString());
+        if ( thisData.getTime() < shiftEnd.getTime() && thisData.getTime() >= shiftStart.getTime()){
+            //console.log(thisData.toLocaleString());
+            chartLabels.push(thisData.toLocaleString());
+            if((thisData.getTime() < now.getTime())||true) // Debug - remove when complete.
+                chartData.push(hourData.output);
+            else
+                chartData.push(0);
+        }
 
 
     });
+    //console.log(chartData);
+    // Data and Labels are now assembled, populate the chart
+    const data = {
+    labels: chartLabels,
+    datasets: [
+        {
+        label: 'Output',
+        data: chartData,
+        borderColor: "rgba(255,0,0,1.0)",
+        backgroundColor: "rgba(127,127,255,0.25)",
+        stack: 'combined',
+        type: 'bar'
+        }
+    ]
+    };
+
+const config = {
+  type: 'line',
+  data: data,
+  options: {
+    plugins: {
+      title: {
+        display: true,
+        text: 'production Report'
+      }
+    },
+    scales: {
+      y: {
+        stacked: true
+      }
+    }
+  },
+};
+
+new Chart(ctx, config);
 
 }
 
