@@ -20,3 +20,76 @@ body{
     width: 100%;
     max-width: 700px;
 }
+.logEntry{
+    display:flex;
+    margin-left: 10px;
+    padding: 5px;
+    border: #0D131A solid 1px;
+    border-radius: 3px;
+    width: 90%;
+    align-items: center;
+}
+.logType-downtime{
+    padding: 3px;
+    border-radius: 10px;
+    background-color: rgb(203, 203, 255);
+    color: rgb(13, 34, 128);
+}
+.logType-safety{
+    padding: 3px;
+    border-radius: 10px;
+    background-color: rgb(255, 203, 203);
+    color: rgb(128, 13, 13);
+}
+.logType-yield{
+    padding: 3px;
+    border-radius: 10px;
+    background-color: rgb(254, 255, 203);
+    color: rgb(126, 128, 13);
+}
+.logType-cycetime{
+    padding: 3px;
+    border-radius: 10px;
+    background-color: rgb(255, 237, 203);
+    color: rgb(128, 78, 13);
+}
+.logType-output{
+    padding: 3px;
+    border-radius: 10px;
+    background-color: rgb(203, 255, 255);
+    color: rgb(13, 120, 128);
+}
+.logStatus-closed{
+    padding: 3px;
+    border-radius: 10px;
+    background-color: green;
+    color: greenyellow;
+    /* Syntax Taken from sample on: https://developer.chrome.com/blog/a-customizable-select*/
+    &::picker-icon {
+        display: none;
+    }
+}
+.logStatus-open{
+    padding: 3px;
+    border-radius: 10px;
+    background-color: red;
+    color: whitesmoke;
+      &::picker-icon {
+        display: none;
+    }
+}
+.logStatus-inProgress{
+    padding: 3px;
+    border-radius: 10px;
+    background-color: orange;
+    color: navy;
+    &::picker-icon {
+        display: none;
+    }
+}
+/* Syntax Taken from sample on: https://developer.chrome.com/blog/a-customizable-select*/
+.custom-select {
+  &, &::picker(select) {
+    appearance: base-select;    
+  }
+}

@@ -17,7 +17,7 @@
     <main>
         <section id="sct_ShiftOverview">
             <div id="div_shiftControls"></div>
-            <div id="div_shiftChart"><canvas id="myChart" class = "chart"></canvas></div>
+            <div id="div_shiftChart"><canvas id="myChart" class="chart"></canvas></div>
         </section>
         <section id="sct_shiftData">
             <div id="div_shiftData_Live"></div>
@@ -25,8 +25,28 @@
             <div id="div_shiftData_Last"></div>
         </section>
         <section id="sct_shiftLog">
-            <div id="div_logControls"></div>
-            <div id="div_logDisplay"></div>
+            <div id="div_logControls">
+                <!--span class="logEntry">TimeStamp</span>
+                <span class="logEntry"><span class="logType-yield">Type</span></span>
+                <span class="logEntry">
+                    <select name="logStatus" id="logStatus" class="custom-select logStatus-open">
+                        <option value="open" selected><span class="logStatus-open">Open</span></option>
+                        <option value="in-progress"><span class="logStatus-inProgress">In Progress</span></option>
+                        <option value="Closed"><span class="logStatus-closed">Closed</span></option>
+                    </select>
+                </span>
+                <span class="logEntry">Comment</span>
+                <span class="logEntry">Owner</span--></div>
+            <div id="div_logDisplay">
+                <div class="logEntry">
+                    <span>TimeStamp</span>
+                    <span>Event Type</span>
+                    <span>Event Status</span>
+                    <span>Event Comment</span>
+                    <span>Event Owner</span>
+                    <span>   </span><!-- Controls Span - left empty for spacing-->
+                </div>
+            </div>
         </section>
     </main>
     <script src="script.js"></script>
