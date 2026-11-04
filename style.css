@@ -27,7 +27,13 @@ body{
     border: #0D131A solid 1px;
     border-radius: 3px;
     width: 90%;
-    align-items: center;
+    justify-content: space-between;
+}
+
+.logType {
+    padding: 3px;
+    border-radius: 10px;
+    width: 15%;    
 }
 .logType-downtime{
     padding: 3px;
@@ -62,8 +68,9 @@ body{
 .logStatus-closed{
     padding: 3px;
     border-radius: 10px;
-    background-color: green;
-    color: greenyellow;
+    background-color: greenyellow;
+    color: green;
+    width: 100px;
     /* Syntax Taken from sample on: https://developer.chrome.com/blog/a-customizable-select*/
     &::picker-icon {
         display: none;
@@ -74,6 +81,7 @@ body{
     border-radius: 10px;
     background-color: red;
     color: whitesmoke;
+    width: 100px;
       &::picker-icon {
         display: none;
     }
@@ -83,9 +91,14 @@ body{
     border-radius: 10px;
     background-color: orange;
     color: navy;
+    width: 100px;
     &::picker-icon {
         display: none;
     }
+}
+
+.hidden{
+    display: none;
 }
 /* Syntax Taken from sample on: https://developer.chrome.com/blog/a-customizable-select*/
 .custom-select {

@@ -2,6 +2,7 @@ console.log("Javascript is running");
 
 const API_URL = 'https://6ae0f23bbe3bc8fead981c0b.mockapi.io/prodData';
 const logAPI_URL = 'https://6ae0f23bbe3bc8fead981c0b.mockapi.io/eventLog';
+const usersAPI_URL = 'https://6ae0f23bbe3bc8fead981c0b.mockapi.io/Users';
 
 const start = new Date("2026-10-24T00:00:00");
 const now = new Date(Date.now());
@@ -36,6 +37,8 @@ async function getData(){
         const logResponse = await fetch(logAPI_URL);
         const prodData = await response.json();
         const logData = await logResponse.json();
+        const userResponse = await fetch(usersAPI_URL);
+        const userData = await userResponse.json();
         // now have the API Data stored in local variables, store in a new object and return
         // prodData has data based on a fixed date.  To update this for a clean simulation, we need to change the following.
         // 2026-10-23 --> Today
@@ -43,7 +46,8 @@ async function getData(){
         // 2026-10-24 --> Day before
         const retObj = {
             "prodData": prodData,
-            "logData":logData
+            "logData":logData,
+            "userData": userData
         };
         return retObj;
 
@@ -75,16 +79,8 @@ function popChart(){
     const chartData = [];
     const chartLabels = [];
     const ctx = document.getElementById('myChart');
-    apiObj.prodData.forEach(hourData => {
-        // dateTime = hourData.timeStamp.slice(0,10);
-        // hourTime = hourData.timeStamp.slice(11);
-        // console.log(`dateTime: ${dateTime}`);
-        // console.log(`hourTime: ${hourTime}`);
 
-        // const hourDate = new Date(hourData);
-        // console.log(`hourDate: ${hourDate.toLocaleString()}`);
-        
-        // Calculate the date/times for the start and end of shift.
+    apiObj.prodData.forEach(hourData => {
         const shiftStart = new Date(start);
         const shiftEnd = new Date(start);
         if( now.getHours() >= 8 && now.getHours() < 20){ // Day Shift
@@ -105,7 +101,6 @@ function popChart(){
         //Get the hours related to the shift start and end date.
         const thisData = apiDataToDateObj(hourData);
         if ( thisData.getTime() < shiftEnd.getTime() && thisData.getTime() >= shiftStart.getTime()){
-            //console.log(thisData.toLocaleString());
             chartLabels.push(thisData.toLocaleString());
             if((thisData.getTime() < now.getTime())||true) // Todo: Debug - remove when complete.<<<<
                 chartData.push(hourData.output);
@@ -115,7 +110,7 @@ function popChart(){
 
 
     });
-    //console.log(chartData);
+
     // Data and Labels are now assembled, populate the chart
     const data = {
     labels: chartLabels,
@@ -189,7 +184,6 @@ function getLogStatus(logEntry){
                 HTMLData+="</select>";
                 break;
         }
-        console.log(HTMLData);
         return HTMLData;
 }
 
@@ -213,11 +207,13 @@ function popLog(){
         entryDiv.classList.add("logEntry");
         
         const timeSpan = document.createElement("span");
+        timeSpan.classList.add("logType");
         timeSpan.innerText = logEntry.TimeStamp;
         entryDiv.appendChild(timeSpan);
 
         const typeSpan = document.createElement("span");
         typeSpan.innerText = logEntry.Type;
+        typeSpan.classList.add("logType");
         switch(logEntry.Type){
             case('Downtime'):
                 typeSpan.classList.add("logType-downtime");
@@ -232,6 +228,7 @@ function popLog(){
         entryDiv.appendChild(typeSpan);
 
         const statusSpan = document.createElement("span");
+        statusSpan.classList.add("logType");
         statusSpan.innerHTML = getLogStatus(logEntry);
         entryDiv.appendChild(statusSpan);
 
@@ -240,21 +237,26 @@ function popLog(){
         noteInput.setAttribute('type', 'text');
         noteInput.setAttribute('id',"inputField"+logEntry.id);
         noteInput.value = logEntry.Notes
+        noteSpan.classList.add("logType");
         noteSpan.appendChild(noteInput);
         entryDiv.appendChild(noteSpan);
 
         const ownerSpan = document.createElement("span");
+        ownerSpan.classList.add("logType");
         ownerSpan.innerText = logEntry.Owner;
         entryDiv.appendChild(ownerSpan);
 
         const controlsSpan = document.createElement("span");
         const updateButton = document.createElement("button");
+        if(logEntry.Status === "Closed") updateButton.classList.add("hidden");
         updateButton.setAttribute('data-logentry',logEntry.id);
         updateButton.textContent = 'Update';
         const cancelButton = document.createElement("button");
+        cancelButton.classList.add("hidden");
         cancelButton.setAttribute('data-logentry',logEntry.id);
         cancelButton.textContent = 'Cancel';
         // TODO: Add Event Listeners for Buttons
+        controlsSpan.classList.add("logType");
         controlsSpan.appendChild(updateButton);
         controlsSpan.appendChild(cancelButton);
         entryDiv.appendChild(controlsSpan);
