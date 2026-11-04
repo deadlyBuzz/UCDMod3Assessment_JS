@@ -73,6 +73,7 @@ async function initPage(){
  * Populate the chart with the data from API production data.
  * Code and Examples from: https://www.w3schools.com/js/tryit.asp?filename=tryai_chartjs_lines
  * and https://www.w3schools.com/ai/ai_chartjs.asp used for reference to build chart population.
+ * <<<< TODO: Add ref for Google
  */
 function popChart(){
      
@@ -159,32 +160,81 @@ function apiDataToDateObj(dateString){
  * return the Element to place in the log display for the status field.
  */
 function getLogStatus(logEntry){
-    const entryID = logEntry.id;
-    let HTMLData = "";
-        switch(logEntry.Status){
-            case 'Open':
-                HTMLData+="<select name='logStatus' id='logStatus"+entryID+"' class='custom-select logStatus-open'>"
-                HTMLData+="<option value='open' selected><span class='logStatus-open'>Open</span></option>";
-                HTMLData+="<option value='in-progress'><span class='logStatus-inProgress'>In Progress<n></option>";
-                HTMLData+="<option value='Closed'><span class='logStatus-closed'>Closed</span></option>";
-                HTMLData+="</select>";
+    selectVar = document.createElement("select");
+    selectVar.setAttribute("name", `logStatus${logEntry.id}`);
+    selectVar.setAttribute("id", `logStatus${logEntry.id}`);
+    selectVar.classList.add("custom-select");
+
+    openOpt = document.createElement("option");
+    openOpt.setAttribute("value","open");
+    openSpan = document.createElement("span");
+    openSpan.innerText = "Open";
+    openSpan.classList.add("logStatus-open");
+    openOpt.appendChild(openSpan);
+    
+
+    inprogOpt = document.createElement("option");
+    inprogOpt.setAttribute("value","in-progress");
+    inprogSpan = document.createElement("span");
+    inprogSpan.innerText = "In progress";
+    inprogSpan.classList.add("logStatus-inProgress");
+    inprogOpt.appendChild(inprogSpan);
+
+    closedOpt = document.createElement("option");
+    closedOpt.setAttribute("value","closed");
+    closedSpan = document.createElement("span");
+    closedSpan.innerText = "Closed";
+    closedSpan.classList.add("logStatus-closed");
+    closedOpt.appendChild(closedSpan);
+
+
+    switch(logEntry.Status){
+        case 'In Progress':
+            selectVar.classList.add("logStatus-inProgress");
+            inprogOpt.setAttribute("selected", true);
+            break;
+        case 'Closed':
+            selectVar.classList.add("logStatus-closed");
+            closedOpt.setAttribute("selected", true);
+            break;
+        default:
+            selectVar.classList.add("logStatus-open");
+            openOpt.setAttribute("selected", true);            
+    }
+
+    selectVar.appendChild(openOpt);
+    selectVar.appendChild(inprogOpt);
+    selectVar.appendChild(closedOpt);
+
+    selectVar.addEventListener("change", () => {
+        thisSelect = document.getElementById(`logStatus${logEntry.id}`);
+        thisUpdateButton = document.getElementById(`updateButton${logEntry.id}`);
+        thisCancelButton = document.getElementById(`cancelButton${logEntry.id}`);
+
+        switch(thisSelect.value){
+            case 'closed':
+                thisSelect.classList.remove("logStatus-inProgress");
+                thisSelect.classList.remove("logStatus-open");
+                thisSelect.classList.add("logStatus-closed");
                 break;
-            case 'Closed':
-                HTMLData+="<select name='logStatus' id='logStatus"+entryID+"' class='custom-select logStatus-closed'>"
-                HTMLData+="<option value='open'><span class='logStatus-open'>Open</span></option>";
-                HTMLData+="<option value='in-progress'><span class='logStatus-inProgress'>In Progress<n></option>";
-                HTMLData+="<option value='Closed' selected><span class='logStatus-closed'>Closed</span></option>";
-                HTMLData+="</select>";
+            case 'in-progress':
+                thisSelect.classList.remove("logStatus-open");
+                thisSelect.classList.remove("logStatus-closed");
+                thisSelect.classList.add("logStatus-inProgress");
                 break;
-            case 'In Progress':
-                HTMLData+="<select name='logStatus' id='logStatus"+entryID+"' class='custom-select logStatus-in-progress'>"
-                HTMLData+="<option value='open'><span class='logStatus-open'>Open</span></option>";
-                HTMLData+="<option value='in-progress'><span class='logStatus-inProgress'>In Progress<n></option>";
-                HTMLData+="<option value='Closed' selected><span class='logStatus-closed'>Closed</span></option>";
-                HTMLData+="</select>";
-                break;
+            default:
+                thisSelect.classList.remove("logStatus-inProgress");
+                thisSelect.classList.remove("logStatus-closed");
+                thisSelect.classList.add("logStatus-open");
         }
-        return HTMLData;
+
+        thisUpdateButton.classList.remove("hidden");
+        thisCancelButton.classList.remove("hidden");
+
+
+    })
+
+    return selectVar;
 }
 
 /**
@@ -196,12 +246,23 @@ function getLogType(logEntry){
 
 }
 
+function getStatusSpan(logElement){
+    statusSpan = document.createElement("Span");
+    statusSpan.addEventListener('click', () => {
+        console.log(`Status ${logElement.id} has been clicked)`);
+    });
+    return statusSpan;
+}
+
+
 /**
  * Populate Log.
  * Get the data from the log retrieved from the API and populate it on the Page
  */
 function popLog(){
     logDisplay = document.getElementById('div_logDisplay');
+
+    // Iterate through each logEntry and create a line on the event log.
     apiObj.logData.forEach(logEntry => {
         const entryDiv = document.createElement("div");
         entryDiv.classList.add("logEntry");
@@ -229,7 +290,7 @@ function popLog(){
 
         const statusSpan = document.createElement("span");
         statusSpan.classList.add("logType");
-        statusSpan.innerHTML = getLogStatus(logEntry);
+        statusSpan.appendChild(getLogStatus(logEntry));
         entryDiv.appendChild(statusSpan);
 
         const noteSpan = document.createElement("span");
@@ -250,10 +311,12 @@ function popLog(){
         const updateButton = document.createElement("button");
         if(logEntry.Status === "Closed") updateButton.classList.add("hidden");
         updateButton.setAttribute('data-logentry',logEntry.id);
+        updateButton.setAttribute('id',`updateButton${logEntry.id}`);
         updateButton.textContent = 'Update';
         const cancelButton = document.createElement("button");
         cancelButton.classList.add("hidden");
         cancelButton.setAttribute('data-logentry',logEntry.id);
+        cancelButton.setAttribute('id',`cancelButton${logEntry.id}`);
         cancelButton.textContent = 'Cancel';
         // TODO: Add Event Listeners for Buttons
         controlsSpan.classList.add("logType");
