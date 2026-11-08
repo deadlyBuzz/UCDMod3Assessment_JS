@@ -166,7 +166,7 @@ function getLogStatus(logEntry){
     selectVar.classList.add("custom-select");
 
     openOpt = document.createElement("option");
-    openOpt.setAttribute("value","open");
+    openOpt.setAttribute("value","Open");
     openSpan = document.createElement("span");
     openSpan.innerText = "Open";
     openSpan.classList.add("logStatus-open");
@@ -174,14 +174,14 @@ function getLogStatus(logEntry){
     
 
     inprogOpt = document.createElement("option");
-    inprogOpt.setAttribute("value","in-progress");
+    inprogOpt.setAttribute("value","In progress");
     inprogSpan = document.createElement("span");
     inprogSpan.innerText = "In progress";
     inprogSpan.classList.add("logStatus-inProgress");
     inprogOpt.appendChild(inprogSpan);
 
     closedOpt = document.createElement("option");
-    closedOpt.setAttribute("value","closed");
+    closedOpt.setAttribute("value","Closed");
     closedSpan = document.createElement("span");
     closedSpan.innerText = "Closed";
     closedSpan.classList.add("logStatus-closed");
@@ -189,7 +189,7 @@ function getLogStatus(logEntry){
 
 
     switch(logEntry.Status){
-        case 'In Progress':
+        case 'In progress':
             selectVar.classList.add("logStatus-inProgress");
             inprogOpt.setAttribute("selected", true);
             break;
@@ -206,18 +206,19 @@ function getLogStatus(logEntry){
     selectVar.appendChild(inprogOpt);
     selectVar.appendChild(closedOpt);
 
+    // Add the event listener to update the button on data change and allow saving.
     selectVar.addEventListener("change", () => {
         thisSelect = document.getElementById(`logStatus${logEntry.id}`);
         thisUpdateButton = document.getElementById(`updateButton${logEntry.id}`);
         thisCancelButton = document.getElementById(`cancelButton${logEntry.id}`);
 
         switch(thisSelect.value){
-            case 'closed':
+            case 'Closed':
                 thisSelect.classList.remove("logStatus-inProgress");
                 thisSelect.classList.remove("logStatus-open");
                 thisSelect.classList.add("logStatus-closed");
                 break;
-            case 'in-progress':
+            case 'In progress':
                 thisSelect.classList.remove("logStatus-open");
                 thisSelect.classList.remove("logStatus-closed");
                 thisSelect.classList.add("logStatus-inProgress");
@@ -230,11 +231,26 @@ function getLogStatus(logEntry){
 
         thisUpdateButton.classList.remove("hidden");
         thisCancelButton.classList.remove("hidden");
-
-
-    })
+    });
 
     return selectVar;
+}
+
+function getLogNotes(logEntry){
+    console.log('LogEntry: ',logEntry);
+    thisUpdateButton = document.getElementById(`updateButton${logEntry.id}`);
+    thisCancelButton = document.getElementById(`cancelButton${logEntry.id}`);
+    const noteInput = document.createElement('input');
+    noteInput.setAttribute('type', 'text');
+    noteInput.setAttribute('id',"inputField"+logEntry.id);
+    noteInput.value = logEntry.Notes
+    noteInput.addEventListener("change", () => {
+        thisUpdateButton = document.getElementById(`updateButton${logEntry.id}`);
+        thisCancelButton = document.getElementById(`cancelButton${logEntry.id}`);
+        thisUpdateButton.classList.remove("hidden");
+        thisCancelButton.classList.remove("hidden");
+    });
+    return noteInput;
 }
 
 /**
@@ -244,14 +260,6 @@ function getLogStatus(logEntry){
  */
 function getLogType(logEntry){
 
-}
-
-function getStatusSpan(logElement){
-    statusSpan = document.createElement("Span");
-    statusSpan.addEventListener('click', () => {
-        console.log(`Status ${logElement.id} has been clicked)`);
-    });
-    return statusSpan;
 }
 
 
@@ -294,12 +302,7 @@ function popLog(){
         entryDiv.appendChild(statusSpan);
 
         const noteSpan = document.createElement("span");
-        const noteInput = document.createElement('input');
-        noteInput.setAttribute('type', 'text');
-        noteInput.setAttribute('id',"inputField"+logEntry.id);
-        noteInput.value = logEntry.Notes
-        noteSpan.classList.add("logType");
-        noteSpan.appendChild(noteInput);
+        noteSpan.appendChild(getLogNotes(logEntry));
         entryDiv.appendChild(noteSpan);
 
         const ownerSpan = document.createElement("span");
@@ -307,12 +310,43 @@ function popLog(){
         ownerSpan.innerText = logEntry.Owner;
         entryDiv.appendChild(ownerSpan);
 
+        // Add controls section where the Update and cancel buttons are shown.
         const controlsSpan = document.createElement("span");
         const updateButton = document.createElement("button");
-        if(logEntry.Status === "Closed") updateButton.classList.add("hidden");
+        //if(logEntry.Status === "Closed") updateButton.classList.add("hidden");
+        updateButton.classList.add("hidden");
         updateButton.setAttribute('data-logentry',logEntry.id);
         updateButton.setAttribute('id',`updateButton${logEntry.id}`);
         updateButton.textContent = 'Update';
+        updateButton.addEventListener("click", async () =>{
+            const thisLogEntry = apiObj.logData.filter((entry) => entry.id===logEntry.id)[0];
+            const logNotes = document.getElementById(`inputField${thisLogEntry.id}`).value;            
+            const logStatus = document.getElementById(`logStatus${thisLogEntry.id}`).value;
+            const thisUpdateButton = document.getElementById(`updateButton${thisLogEntry.id}`);
+            const thisCancelButton = document.getElementById(`cancelButton${thisLogEntry.id}`);
+            thisLogEntry.Notes = logNotes;
+            thisLogEntry.Status = logStatus;
+            console.log("thisLogEntry: ", thisLogEntry);
+            const bodyData = JSON.stringify(thisLogEntry);
+            console.log('Body Data', bodyData);
+            try{
+            const response = await fetch(`${logAPI_URL}/${logEntry.id}`,{
+                method: 'PUT',
+                headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: bodyData
+                });
+            const data = await response.json();
+            console.log("Data Updated:",data);
+            thisUpdateButton.classList.add("hidden");
+            thisCancelButton.classList.add("hidden");
+            } catch (error) {
+                console.error("Error Updating the Log:");
+                console.error(error);   
+            }
+        }); 
+
         const cancelButton = document.createElement("button");
         cancelButton.classList.add("hidden");
         cancelButton.setAttribute('data-logentry',logEntry.id);
