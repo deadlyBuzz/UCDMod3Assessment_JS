@@ -360,6 +360,13 @@ function popLog(){
 
         logDisplay.appendChild(entryDiv);
     });
+    newButton = document.createElement("button");
+    newButton.innerText = "New log Entry";
+    newButton.addEventListener("click", (event) =>{
+        event.preventDefault();
+        location.replace("./newlogentry.html");
+    });
+    logDisplay.appendChild(newButton);
 }
 
 initPage();

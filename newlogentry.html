@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New manual Log Entry</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>New Manual log</h1>
+    <main>
+        <form id="newLogEntryForm">
+            <label for="logEntryType"></label>
+            <select name="logEntryType" id="logEntryType">
+                <option value="Downtime">Downtime</option>
+                <option value="Safety">Safety</option>
+                <option value="Yield">Yield</option>
+                <option value="Cycletime">Cycletime</option>
+                <option value="Output">Output</option>
+            </select>
+            <label for="logEntryStatus"></label>
+            <select name="logEntryStatus" id="logEntryStatus">
+                <option value="Open">Open</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Closed">Closed</option>
+            </select>
+            <label for="logEntryNotes"></label>
+            <input type="text" name="logEntryNotes" id="logEntryNotes" placeholder="Enter Notes or Skip if unavailable">
+            <button id="submitButton" type="submit">Create Log Entry</button>
+            <button id="cancelButton" type="submit">Cancel</button>
+        </form>
+    </main>
+    <script src="formscript.js"></script>
+</body>
+</html>
