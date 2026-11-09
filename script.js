@@ -2,7 +2,7 @@ console.log("Javascript is running");
 
 const API_URL = 'https://6ae0f23bbe3bc8fead981c0b.mockapi.io/prodData';
 const logAPI_URL = 'https://6ae0f23bbe3bc8fead981c0b.mockapi.io/eventLog';
-const usersAPI_URL = 'https://6ae0f23bbe3bc8fead981c0b.mockapi.io/Users';
+const settingsAPI_URL = 'https://6ae0f23bbe3bc8fead981c0b.mockapi.io/Settings';
 
 const start = new Date("2026-10-24T00:00:00");
 const now = new Date(Date.now());
@@ -27,7 +27,36 @@ console.log(`Now: ${now.toLocaleString()}`);
 // console.log(nowTime);
 
 let apiObj = {};
+let thisShiftProdNos = [];
 
+class ProductionHour {
+    constructor(hourEntry){
+        this.entry = hourEntry;
+        this.entryString = JSON.stringify(hourEntry);
+        this.timeStamp = new Date(hourEntry.timeStamp);
+        this.yield = hourEntry.Yield;
+        this.output = hourEntry.output;
+        this.cycleTime = hourEntry.CycleTime;
+        this.uptime = hourEntry.Uptime;
+        this.id = hourEntry.ID;
+    }
+
+    isYieldEvent(yieldLimit){
+        return(this.yield < yieldLimit);
+    }
+
+    isOutputEvent(outputLimit){
+        return(this.output < outputLimit);
+    }
+
+    isCycleTimeEvent(cycleTimeUpperLimit, cycleTimeLowerLimit){
+        return((cycleTimeLowerLimit > this.cycleTime)||(cycleTimeUpperLimit < this.cycleTime));
+    }
+
+    isUptimeEvent(uptimeLimit){
+        return(this.uptime < uptimeLimit);
+    }
+}
 /** getData()
  *Get the Data from the API for both the Production Data, and the Log Data.
  */
@@ -37,8 +66,8 @@ async function getData(){
         const logResponse = await fetch(logAPI_URL);
         const prodData = await response.json();
         const logData = await logResponse.json();
-        const userResponse = await fetch(usersAPI_URL);
-        const userData = await userResponse.json();
+        const settingsResponse = await fetch(settingsAPI_URL);
+        const settingsData = await settingsResponse.json();
         // now have the API Data stored in local variables, store in a new object and return
         // prodData has data based on a fixed date.  To update this for a clean simulation, we need to change the following.
         // 2026-10-23 --> Today
@@ -47,7 +76,7 @@ async function getData(){
         const retObj = {
             "prodData": prodData,
             "logData":logData,
-            "userData": userData
+            "settingsData": settingsData
         };
         return retObj;
 
@@ -67,6 +96,8 @@ async function initPage(){
     apiObj = await getData();
     popChart();
     popLog();
+    const testButton = document.getElementById(`testButton`);
+    testButton.addEventListener(`click`, getNewAutoLogEntries);
 }
 
 /**
@@ -80,6 +111,7 @@ function popChart(){
     const chartData = [];
     const chartLabels = [];
     const ctx = document.getElementById('myChart');
+    thisShiftProdNos = new Array();
 
     apiObj.prodData.forEach(hourData => {
         const shiftStart = new Date(start);
@@ -103,8 +135,11 @@ function popChart(){
         const thisData = apiDataToDateObj(hourData);
         if ( thisData.getTime() < shiftEnd.getTime() && thisData.getTime() >= shiftStart.getTime()){
             chartLabels.push(thisData.toLocaleString());
-            if((thisData.getTime() < now.getTime())||true) // Todo: Debug - remove when complete.<<<<
+            if((thisData.getTime() < now.getTime())||true){ // Todo: Debug - remove when complete.<<<<
                 chartData.push(hourData.output);
+                // create a production hour and add it to the current shift info.
+                thisShiftProdNos.push(new ProductionHour(hourData));
+            }
             else
                 chartData.push(0);
         }
@@ -236,6 +271,14 @@ function getLogStatus(logEntry){
     return selectVar;
 }
 
+/**
+ * getLogNotes
+ * Provide the log Entry item to the function and it builds and returns 
+ * the log notes input field to place on the HTML page.
+ * 
+ * @param logEntry - The log entry pulled from the API.
+ * @returns Input Field for controlling the Notes from the Log Entry element provided
+ */
 function getLogNotes(logEntry){
     console.log('LogEntry: ',logEntry);
     thisUpdateButton = document.getElementById(`updateButton${logEntry.id}`);
@@ -369,4 +412,43 @@ function popLog(){
     logDisplay.appendChild(newButton);
 }
 
+/**
+ * getNewAutoLogEntries
+ * Iterate through the Production Data for today and evaluate if a new
+ * Log entry is to be automatically created.
+ */
+function getNewAutoLogEntries(){
+    let yieldLimit = 0;
+    let outputLimit = 0;
+    let uptimeLimit = 0;
+    let cycletimeUpperLimit = 0;
+    let cycletimeLowerLimit = 0;
+
+    // Extract each setting from the Settings list into local variables for convenience
+    apiObj.settingsData.forEach(setting =>{
+        switch(setting.name){
+            case "Shift Target":
+                outputLimit = (setting.lowerLimit/12);
+                break;
+            case "Yield Target":
+                yieldLimit = setting.lowerLimit;
+                break;
+            case "Downtime Target":
+                uptimeLimit = setting.lowerLimit;
+                break;
+            case "Cycletime Target":
+                cycletimeUpperLimit = setting.upperLimit;
+                cycletimeLowerLimit = setting.lowerLimit;
+                break;
+        }    
+    });
+
+    // test each of the production Hours for a new Event
+    thisShiftProdNos.forEach(hourData => {
+        if(hourData.isYieldEvent(yieldLimit)) console.log(`Yield Event: ${hourData.entryString}`);
+        if(hourData.isOutputEvent(outputLimit)) console.log(`Output Event: ${hourData.entryString}`);
+        if(hourData.isUptimeEvent(uptimeLimit)) console.log(`Uptime Event: ${hourData.entryString}`);        
+        if(hourData.isCycleTimeEvent(cycletimeUpperLimit, cycletimeLowerLimit)) console.log(`Cycletime Event: ${hourData.entryString}`);
+    });
+}
 initPage();
