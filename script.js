@@ -57,6 +57,19 @@ class ProductionHour {
         return(this.uptime < uptimeLimit);
     }
 }
+
+/**
+ * delay
+ * Taken from Sample https://dev.to/zxce3/implementing-delaysleep-in-javascript-with-promises-and-asyncawait-264
+ * to try to resolve the issue with Duplicate ID entries in mockAPI
+ * 
+ * @param {number} ms 
+ * @returns 
+ */
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 /** getData()
  *Get the Data from the API for both the Production Data, and the Log Data.
  */
@@ -454,26 +467,30 @@ function getNewAutoLogEntries(){
 }
 
 async function createLogEntries(hourEntries){
-    hourEntries.forEach(hourEntry =>{
+    for(const hourEntry of hourEntries){ // This caused no end of pain and misery.
+        // had used a foreach but the foreach was firing off the async functions simultaeneously
+        // and causing duplicate ID's in mockAPI.
+        // I had to use a simple for loop to force the loop to wait before 
+        // issuing the next command.
         // build a log Entry to upload to the Server
-        newLogEntry = {"TimeStamp": hourEntry.hourData.timeStamp,
+        const newLogEntry = {"TimeStamp": hourEntry.hourData.timeStamp,
             "Type": hourEntry.type,
             "Status": "Open",
             "Notes": "Auto Created",
-            "Closed": ""
+            "Closed": "",
         }
         // get a list of entries with the same timestamp and type
-        let existingEntries = apiObj.logData.filter(logEntry => 
+        const existingEntries = apiObj.logData.filter(logEntry => 
             ((logEntry.TimeStamp === hourEntry.hourData.timeStamp)
             && (logEntry.Type === hourEntry.type)));
 
         // length = 0 => none exist
         if(existingEntries.length===0){
-            //console.log(newLogEntry);
-            //console.log(hourEntry);
-            createLogEntry(newLogEntry);
+            console.log(`new Log Entry: ${JSON.stringify(newLogEntry)}`);
+            const result = await createLogEntry(newLogEntry);
+            await delay(1000); // delay before continuing
         }
-    });
+    }
 }
 
 async function createLogEntry(logEntry){
@@ -488,9 +505,11 @@ async function createLogEntry(logEntry){
             });
         const data = await response.json();
         console.log(`created new entry: ${JSON.stringify(data)}`);
+        return true;
         } catch(error) {
             console.error(`Error posting Data: ${bodyString}`);
             console.error(error);
+            return false;
         }
 }
 initPage();
