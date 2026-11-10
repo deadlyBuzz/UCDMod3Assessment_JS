@@ -33,7 +33,7 @@ class ProductionHour {
     constructor(hourEntry){
         this.entry = hourEntry;
         this.entryString = JSON.stringify(hourEntry);
-        this.timeStamp = new Date(hourEntry.timeStamp);
+        this.timeStamp = hourEntry.timeStamp;
         this.yield = hourEntry.Yield;
         this.output = hourEntry.output;
         this.cycleTime = hourEntry.CycleTime;
@@ -442,13 +442,55 @@ function getNewAutoLogEntries(){
                 break;
         }    
     });
-
+    let hoursToLog = new Array();
     // test each of the production Hours for a new Event
     thisShiftProdNos.forEach(hourData => {
-        if(hourData.isYieldEvent(yieldLimit)) console.log(`Yield Event: ${hourData.entryString}`);
-        if(hourData.isOutputEvent(outputLimit)) console.log(`Output Event: ${hourData.entryString}`);
-        if(hourData.isUptimeEvent(uptimeLimit)) console.log(`Uptime Event: ${hourData.entryString}`);        
-        if(hourData.isCycleTimeEvent(cycletimeUpperLimit, cycletimeLowerLimit)) console.log(`Cycletime Event: ${hourData.entryString}`);
+        if(hourData.isYieldEvent(yieldLimit)) hoursToLog.push({"hourData":hourData, "type":"Yield"});
+        if(hourData.isOutputEvent(outputLimit)) hoursToLog.push({"hourData":hourData, "type":"Output"});
+        if(hourData.isUptimeEvent(uptimeLimit)) hoursToLog.push({"hourData":hourData, "type":"Downtime"});       
+        if(hourData.isCycleTimeEvent(cycletimeUpperLimit, cycletimeLowerLimit)) hoursToLog.push({"hourData":hourData, "type":"Cycle Time"});
     });
+    if(hoursToLog.length > 0) createLogEntries(hoursToLog);
+}
+
+async function createLogEntries(hourEntries){
+    hourEntries.forEach(hourEntry =>{
+        // build a log Entry to upload to the Server
+        newLogEntry = {"TimeStamp": hourEntry.hourData.timeStamp,
+            "Type": hourEntry.type,
+            "Status": "Open",
+            "Notes": "Auto Created",
+            "Closed": ""
+        }
+        // get a list of entries with the same timestamp and type
+        let existingEntries = apiObj.logData.filter(logEntry => 
+            ((logEntry.TimeStamp === hourEntry.hourData.timeStamp)
+            && (logEntry.Type === hourEntry.type)));
+
+        // length = 0 => none exist
+        if(existingEntries.length===0){
+            //console.log(newLogEntry);
+            //console.log(hourEntry);
+            createLogEntry(newLogEntry);
+        }
+    });
+}
+
+async function createLogEntry(logEntry){
+    try{
+        let bodyString = JSON.stringify(logEntry);
+        const response = await fetch(logAPI_URL, {
+            method: 'POST',
+            headers: {
+                'content-Type': 'application/json'
+            },
+            body: bodyString
+            });
+        const data = await response.json();
+        console.log(`created new entry: ${JSON.stringify(data)}`);
+        } catch(error) {
+            console.error(`Error posting Data: ${bodyString}`);
+            console.error(error);
+        }
 }
 initPage();
