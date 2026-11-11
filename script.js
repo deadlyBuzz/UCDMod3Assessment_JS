@@ -409,6 +409,36 @@ function popLog(){
         cancelButton.setAttribute('id',`cancelButton${logEntry.id}`);
         cancelButton.textContent = 'Cancel';
         // TODO: Add Event Listeners for Buttons
+        cancelButton.addEventListener('click', () => {
+            const thisLogEntry = apiObj.logData.filter((entry) => entry.id===logEntry.id)[0];
+            const logNotes = document.getElementById(`inputField${thisLogEntry.id}`);
+            const logStatus = document.getElementById(`logStatus${thisLogEntry.id}`);
+            const thisUpdateButton = document.getElementById(`updateButton${thisLogEntry.id}`);
+            const thisCancelButton = document.getElementById(`cancelButton${thisLogEntry.id}`);
+            logNotes.value = thisLogEntry.Notes;
+            logStatus.value = thisLogEntry.Status;
+
+            // Update the style of the dropdown after cancelling.
+            switch(logStatus.value){
+                case 'Closed':
+                    logStatus.classList.remove("logStatus-inProgress");
+                    logStatus.classList.remove("logStatus-open");
+                    logStatus.classList.add("logStatus-closed");
+                    break;
+                case 'In progress':
+                    logStatus.classList.remove("logStatus-open");
+                    logStatus.classList.remove("logStatus-closed");
+                    logStatus.classList.add("logStatus-inProgress");
+                    break;
+                default:
+                    logStatus.classList.remove("logStatus-inProgress");
+                    logStatus.classList.remove("logStatus-closed");
+                    logStatus.classList.add("logStatus-open");
+            }
+
+            thisUpdateButton.classList.add("hidden");
+            thisCancelButton.classList.add("hidden");
+        });
         controlsSpan.classList.add("logType");
         controlsSpan.appendChild(updateButton);
         controlsSpan.appendChild(cancelButton);
