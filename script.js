@@ -307,15 +307,6 @@ function getLogNotes(logEntry){
     return noteInput;
 }
 
-/**
- * Get Log Type
- * Pass the log entry object (Line from array retrieved from API) and
- * return the Element to place in the log display for tye type field.
- */
-function getLogType(logEntry){
-
-}
-
 
 /**
  * Populate Log.
@@ -344,6 +335,12 @@ function popLog(){
                 break;
             case('Safety'):
                 typeSpan.classList.add("logType-safety");
+                break;
+            case('Yield'):
+                typeSpan.classList.add("logType-yield");
+                break;
+            case('Cycletime'):
+                typeSpan.classList.add("logType-cycletime");
                 break;
             default:
                 typeSpan.classList.add("logType-output");

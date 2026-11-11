@@ -12,6 +12,7 @@
         <form id="newLogEntryForm">
             <label for="logEntryType"></label>
             <select name="logEntryType" id="logEntryType">
+                <option value="" selected>Please select a category</option>
                 <option value="Downtime">Downtime</option>
                 <option value="Safety">Safety</option>
                 <option value="Yield">Yield</option>
@@ -20,7 +21,7 @@
             </select>
             <label for="logEntryStatus"></label>
             <select name="logEntryStatus" id="logEntryStatus">
-                <option value="Open">Open</option>
+                <option value="Open" selected>Open</option>
                 <option value="In Progress">In Progress</option>
                 <option value="Closed">Closed</option>
             </select>
@@ -29,6 +30,7 @@
             <button id="submitButton" type="submit">Create Log Entry</button>
             <button id="cancelButton" type="submit">Cancel</button>
         </form>
+        <div id="error-display" class="errorDisplay"></div>
     </main>
     <script src="formscript.js"></script>
 </body>
