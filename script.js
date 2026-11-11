@@ -108,9 +108,7 @@ async function getData(){
 async function initPage(){
     apiObj = await getData();
     popChart();
-    popLog();
-    const testButton = document.getElementById(`testButton`);
-    testButton.addEventListener(`click`, getNewAutoLogEntries);
+    getNewAutoLogEntries();
 }
 
 /**
@@ -325,6 +323,7 @@ function getLogType(logEntry){
  */
 function popLog(){
     logDisplay = document.getElementById('div_logDisplay');
+    logDisplay.innerHTML = "";
 
     // Iterate through each logEntry and create a line on the event log.
     apiObj.logData.forEach(logEntry => {
@@ -408,7 +407,7 @@ function popLog(){
         cancelButton.setAttribute('data-logentry',logEntry.id);
         cancelButton.setAttribute('id',`cancelButton${logEntry.id}`);
         cancelButton.textContent = 'Cancel';
-        // TODO: Add Event Listeners for Buttons
+        
         cancelButton.addEventListener('click', () => {
             const thisLogEntry = apiObj.logData.filter((entry) => entry.id===logEntry.id)[0];
             const logNotes = document.getElementById(`inputField${thisLogEntry.id}`);
@@ -518,9 +517,13 @@ async function createLogEntries(hourEntries){
         if(existingEntries.length===0){
             console.log(`new Log Entry: ${JSON.stringify(newLogEntry)}`);
             const result = await createLogEntry(newLogEntry);
-            await delay(1000); // delay before continuing
+            //await delay(1000); // delay before continuing
         }
     }
+    // API Data source has been updated - get the new Data before running poplog
+    // and displaying the event log.
+    apiObj = await getData();
+    popLog();
 }
 
 async function createLogEntry(logEntry){
