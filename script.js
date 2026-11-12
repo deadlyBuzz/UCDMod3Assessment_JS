@@ -12,7 +12,7 @@ now.setFullYear(start.getFullYear());
 now.setMilliseconds(0);
 now.setSeconds(0);
 now.setMinutes(0);
-now.setHours(22); // For testing, Remove.
+now.setHours(22); //<<<< For testing, Remove.
 const yesterday = new Date(start);
 yesterday.setDate(yesterday.getDate() - 1);
 const dayBefore = new Date(yesterday);
@@ -354,18 +354,15 @@ function popLog(){
         entryDiv.appendChild(statusSpan);
 
         const noteSpan = document.createElement("span");
+        noteSpan.classList.add("logNote");
         noteSpan.appendChild(getLogNotes(logEntry));
         entryDiv.appendChild(noteSpan);
-
-        const ownerSpan = document.createElement("span");
-        ownerSpan.classList.add("logType");
-        ownerSpan.innerText = logEntry.Owner;
-        entryDiv.appendChild(ownerSpan);
 
         // Add controls section where the Update and cancel buttons are shown.
         const controlsSpan = document.createElement("span");
         const updateButton = document.createElement("button");
         //if(logEntry.Status === "Closed") updateButton.classList.add("hidden");
+        //updateButton.classList.add("btn-54");
         updateButton.classList.add("hidden");
         updateButton.setAttribute('data-logentry',logEntry.id);
         updateButton.setAttribute('id',`updateButton${logEntry.id}`);
@@ -378,6 +375,14 @@ function popLog(){
             const thisCancelButton = document.getElementById(`cancelButton${thisLogEntry.id}`);
             thisLogEntry.Notes = logNotes;
             thisLogEntry.Status = logStatus;
+
+            // If we're closing the Task (Status closed but no time set.)
+            if((logStatus==="Closed")&&(thisLogEntry.Closed.length <= 2)){
+                const timeStampTime = now.toISOString().slice(11,19);
+                const timeStampDate = now.toISOString().slice(0,10);
+                thisLogEntry.Closed = `${timeStampDate} ${timeStampTime}`;
+            }
+
             console.log("thisLogEntry: ", thisLogEntry);
             const bodyData = JSON.stringify(thisLogEntry);
             console.log('Body Data', bodyData);
@@ -397,6 +402,7 @@ function popLog(){
                 console.error("Error Updating the Log:");
                 console.error(error);   
             }
+            popLog();
         }); 
 
         const cancelButton = document.createElement("button");

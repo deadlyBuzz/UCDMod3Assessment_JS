@@ -7,7 +7,7 @@ cancelButton.addEventListener('click', (event)=>{
     location.replace("./index.html");
 });
 
-const errorDisplay = document.getElementById('error-display');
+const errorDisplay = document.getElementById('errorDisplay');
 clearForm();
 // define the submit button to create the log entry based on the data on the form.
 submitButton = document.getElementById('submitButton');
@@ -33,6 +33,7 @@ submitButton.addEventListener('click', async (event) => {
 
     // Build a JSON object to represent the chosen data
     const newLogEntry = {};
+    newLogEntry.Closed = ""; // Ensure MockAPI doesnt attempt to populate closed.
     newLogEntry.TimeStamp = `${timeStampDate} ${timeStampTime}`;
 
     const entryStatus = document.getElementById('logEntryStatus');

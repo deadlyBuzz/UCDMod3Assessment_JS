@@ -11,11 +11,18 @@ body{
 
 .navbar{
     display: flex;
-    align-items: center;
+    align-items: stretch;
     background-color: #0D131A;
     color: #F9FAFB;
 }
 
+span{
+    display: flex;
+    align-content:stretch;
+    justify-content: space-evenly;
+    margin: 3px;
+    /* border: #3366a0 solid 1px; */
+}
 .chart{
     width: 100%;
     max-width: 700px;
@@ -26,15 +33,33 @@ body{
     padding: 5px;
     border: #0D131A solid 1px;
     border-radius: 3px;
-    width: 90%;
+    width: 80%;
     justify-content: space-between;
 }
 
+
+.logNote {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    width: 70%;
+    /* border: #3366a0 solid 1px; */
+}
+.logNote > input{
+    width: 100%;
+    border-radius: 5px;
+    background-color: azure;
+}
+
 .logType {
-    padding: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 3px;
+    padding-top: 3px;
     border-radius: 10px;
     width: 15%;    
 }
+
 .logType-downtime{
     padding: 3px;
     border-radius: 10px;
@@ -105,4 +130,45 @@ body{
   &, &::picker(select) {
     appearance: base-select;    
   }
+}
+
+button{
+    border: solid black 1px;
+    border-radius: 30px;
+}
+
+.btn-54 {
+    position: relative;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #111111;
+    outline: none;
+    display: inline-block;
+    user-select: none;
+    font-size: 18px;
+    /* padding: 12px 32px; */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 50px;
+    /*** full width block ***/
+    /* width: 100%; */
+}
+
+.btn-54-colors {
+    color: #2e2e2e;
+    border: 2px solid transparent;
+    background-image: linear-gradient(#ffffff, #ffffff), radial-gradient(circle at left top, #00BCD4, #E91E63);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+}
+
+.btn-54:hover {
+    box-shadow: #00bcd491 0px 0px 20px 0px;
+}
+
+.btn-54:disabled {
+    pointer-events: none;
+    opacity: .65;
+    color: #7e7e7e;
+    background: #dcdcdc;
+    box-shadow: none;
 }
