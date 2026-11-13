@@ -201,6 +201,28 @@ function apiDataToDateObj(dateString){
 }
 
 /**
+ * Function to build the headers for the event log consistently.
+ * @returns {div} headerDiv div DOM object containing the headers.
+ */
+function getLogHeader(){
+    const headerDiv = document.createElement("div");
+    const headerLabels = [
+        {"name":"TimeStamp", "style":"logTime"}, 
+        {"name":"Event Type", "style":"logType"}, 
+        {"name": "Event Status", "style":"logStatus"}, 
+        {"name":"Event comment", "style":"logNote"}, 
+        {"name":"", "style":"logControls"}];
+    headerLabels.forEach(headerLabel =>{
+        const thisSpan = document.createElement("span");
+        thisSpan.innerText = headerLabel.name;
+        thisSpan.classList.add("logData");        
+        thisSpan.classList.add(headerLabel.style);        
+        headerDiv.appendChild(thisSpan);
+    });
+    headerDiv.classList.add("logEntry", "logHeader");
+    return headerDiv;
+}
+/**
  * Get Log Status
  * Pass the log entry object (Line from array retrieved from API) and
  * return the Element to place in the log display for the status field.
@@ -314,7 +336,11 @@ function getLogNotes(logEntry){
  */
 function popLog(){
     logDisplay = document.getElementById('div_logDisplay');
-    logDisplay.innerHTML = "";
+    logDisplay.innerHTML = "";//TODO: <<<< Re-Add the Table Header here.
+    const containerLabel = document.createElement("h2");
+    containerLabel.innerText = "Operations Event Log";
+    logDisplay.appendChild(containerLabel);
+    logDisplay.appendChild(getLogHeader());
 
     // Iterate through each logEntry and create a line on the event log.
     apiObj.logData.forEach(logEntry => {
@@ -322,12 +348,14 @@ function popLog(){
         entryDiv.classList.add("logEntry");
         
         const timeSpan = document.createElement("span");
-        timeSpan.classList.add("logType");
+        timeSpan.classList.add("logData");
+        timeSpan.classList.add("logTime");
         timeSpan.innerText = logEntry.TimeStamp;
         entryDiv.appendChild(timeSpan);
 
         const typeSpan = document.createElement("span");
         typeSpan.innerText = logEntry.Type;
+        typeSpan.classList.add("logData");
         typeSpan.classList.add("logType");
         switch(logEntry.Type){
             case('Downtime'):
@@ -349,11 +377,13 @@ function popLog(){
         entryDiv.appendChild(typeSpan);
 
         const statusSpan = document.createElement("span");
-        statusSpan.classList.add("logType");
+        statusSpan.classList.add("logData");
+        statusSpan.classList.add("logStatus");
         statusSpan.appendChild(getLogStatus(logEntry));
         entryDiv.appendChild(statusSpan);
 
         const noteSpan = document.createElement("span");
+        noteSpan.classList.add("logData");
         noteSpan.classList.add("logNote");
         noteSpan.appendChild(getLogNotes(logEntry));
         entryDiv.appendChild(noteSpan);
@@ -441,11 +471,13 @@ function popLog(){
             thisUpdateButton.classList.add("hidden");
             thisCancelButton.classList.add("hidden");
         });
-        controlsSpan.classList.add("logType");
+        controlsSpan.classList.add("logData");
+        controlsSpan.classList.add("logControls");
         controlsSpan.appendChild(updateButton);
         controlsSpan.appendChild(cancelButton);
         entryDiv.appendChild(controlsSpan);
 
+        
         logDisplay.appendChild(entryDiv);
     });
     newButton = document.createElement("button");
@@ -454,7 +486,9 @@ function popLog(){
         event.preventDefault();
         location.replace("./newlogentry.html");
     });
-    logDisplay.appendChild(newButton);
+    const logControls = document.getElementById("div_logControls");
+    logControls.appendChild(newButton);
+
 }
 
 /**

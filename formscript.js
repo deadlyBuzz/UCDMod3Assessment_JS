@@ -24,7 +24,7 @@ submitButton.addEventListener('click', async (event) => {
     now.setMilliseconds(0);
     now.setSeconds(0);
     now.setMinutes(0);
-    now.setHours(22); // For testing, Remove.
+    now.setHours(22); //<<<< For testing, Remove.
 
 
     const timeStampTime = now.toISOString().slice(11,19);

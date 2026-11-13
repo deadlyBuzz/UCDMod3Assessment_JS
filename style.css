@@ -1,21 +1,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Antonio:wght@100..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
 
 * {
   box-sizing: border-box;
 }
 body{
     font-family: Antonio, Arial, Helvetica, sans-serif;
-    font-size: 16pt;
+    font-size: 14pt;
     font-weight: 140;
 }
 
 .navbar{
     display: flex;
     align-items: stretch;
+    padding-left: 20px;
+    padding-right: 20px;
     background-color: #0D131A;
     color: #F9FAFB;
 }
 
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    border: RGBA(192, 192, 192, 0.7) solid 1px;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    background-color: rgb(248, 248, 248);
+    max-width: 1400px;
+    box-shadow: rgb(224, 224, 224) 0px 0px 20px 0px;
+}
 span{
     display: flex;
     align-content:stretch;
@@ -33,31 +50,31 @@ span{
     padding: 5px;
     border: #0D131A solid 1px;
     border-radius: 3px;
-    width: 80%;
-    justify-content: space-between;
+    width: 95%;
+    justify-content: flex-start;
 }
 
-
-.logNote {
-    display: flex;
-    align-items: stretch;
-    justify-content: center;
-    width: 70%;
-    /* border: #3366a0 solid 1px; */
-}
-.logNote > input{
-    width: 100%;
-    border-radius: 5px;
-    background-color: azure;
+.logHeader{
+    background-color: #0D131A;
+    color: #F9FAFB
 }
 
-.logType {
+.logData{
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 3px;
     padding-top: 3px;
-    border-radius: 10px;
+}
+
+.logTime{
     width: 15%;    
+    text-wrap-mode: nowrap;
+}
+
+
+.logType {
+    border-radius: 10px;
+    width: 10%;    
 }
 
 .logType-downtime{
@@ -90,6 +107,11 @@ span{
     background-color: rgb(203, 255, 255);
     color: rgb(13, 120, 128);
 }
+
+.logStatus{
+    width: 10%;    
+    text-wrap-mode: nowrap;
+}
 .logStatus-closed{
     padding: 3px;
     border-radius: 10px;
@@ -107,7 +129,7 @@ span{
     background-color: red;
     color: whitesmoke;
     width: 100px;
-      &::picker-icon {
+    &::picker-icon {
         display: none;
     }
 }
@@ -122,6 +144,26 @@ span{
     }
 }
 
+.logNote {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    width: 50%;
+    
+    /* border: #3366a0 solid 1px; */
+}
+.logNote > input{
+    width: 100%;
+    border-radius: 5px;
+    background-color: azure;
+}
+
+.logControls{
+    display: flex;
+    justify-content: space-between;
+    width: 10%;    
+    text-wrap-mode: nowrap;
+}
 .hidden{
     display: none;
 }
@@ -133,8 +175,14 @@ span{
 }
 
 button{
-    border: solid black 1px;
+    border: solid #0D131A 1px;
+    color: #FFD400;
+    background-color: #161B22;
     border-radius: 30px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .btn-54 {
