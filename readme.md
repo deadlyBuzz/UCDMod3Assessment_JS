@@ -188,7 +188,10 @@ I had intended on using Bootstrap so I had imported it, but I had incorrectcly p
 I simply reomved bootstrap to implement my final solution.
 
 ## AI Usage
-Ai was used to Generate the Ideas for a project that could be used for the assessment
-Was used to help debug the Issues with reTool and API Storage.
-AI was also used to help find the issues with `forEach` and the asynchronous function calls for MockAPI.
+- AI was used to Generate the Ideas for a project that could be used for the assessment
+- Was used to help debug the Issues with reTool and API Storage.
+- AI was also used to help find the issues with `forEach` and the asynchronous function calls for MockAPI.*
+
+these conversations have been uploaded to the [notes](https://github.com/deadlyBuzz/UCDMod3Assessment_JS/tree/main/Notes) section on Github along with the Excel sheet used to generate the production numbers in MockAPI (and retool).
+'* AI Was used to debug this but I cannot find the conversation for reference.
 
