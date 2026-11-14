@@ -1,9 +1,13 @@
-console.log("Javascript is running");
-
 const API_URL = 'https://6ae0f23bbe3bc8fead981c0b.mockapi.io/prodData';
 const logAPI_URL = 'https://6ae0f23bbe3bc8fead981c0b.mockapi.io/eventLog';
 const settingsAPI_URL = 'https://6ae0f23bbe3bc8fead981c0b.mockapi.io/Settings';
 
+
+/* Set the date for the simulation.
+As I've no idea when this will be run and the MockAPI service only allows limited
+entries, I've hard-coded the date to the 24th of October where I have data, and am 
+using the current time to show functionality.
+*/
 const start = new Date("2026-10-24T00:00:00");
 const now = new Date(Date.now());
 now.setDate(start.getDate());
@@ -12,22 +16,22 @@ now.setFullYear(start.getFullYear());
 now.setMilliseconds(0);
 now.setSeconds(0);
 now.setMinutes(0);
-const yesterday = new Date(start);
-yesterday.setDate(yesterday.getDate() - 1);
-const dayBefore = new Date(yesterday);
-dayBefore.setDate(dayBefore.getDate() - 1);
-console.log(`Today: ${start.toLocaleString()}`);
-console.log(`yesterday: ${yesterday.toLocaleString()}`);
-console.log(`Day Before: ${dayBefore.toLocaleString()}`);
-console.log(`Now: ${now.toLocaleString()}`);
-// const today = start.toISOString().slice(0,10);
-// console.log(today);
-// const nowTime = start.toISOString().slice(11,19);
-// console.log(nowTime);
 
+/* create global variables for storing Data
+as the data will be retrieved from getData(), this is an object that will hold
+the production hours, settings and event log entries after it has been retrieved from
+the API. 
+*/
 let apiObj = {};
-let thisShiftProdNos = [];
+let thisShiftProdNos = [];  // Will be populated by getAutoLogEntries() to represent
+                            // the hours relevant to the current shift.
 
+/**
+ * ProductionHour Class
+ * This is overkill but when I had created this I thought I would have to
+ * be doing significant work with manipulating dates from the API Data.
+ * Seeing as I'm still using the is<type>Event functions, I've left it here.
+ */
 class ProductionHour {
     constructor(hourEntry){
         this.entry = hourEntry;
@@ -182,12 +186,19 @@ new Chart(ctx, config);
 
 }
 
+/**
+ * apiDataToDateObj
+ * Convenience function to convert the data from the API to a Date.
+ * Could refactor out but it works so it's low priority.
+ * @param {string} dateString String from the API that contains a date
+ * @returns a date object from the date applied.
+ */
 function apiDataToDateObj(dateString){
     return new Date(`${dateString.timeStamp.slice(0,10)}T${dateString.timeStamp.slice(11)}`)
-    //console.log(`${dateString.timeStamp.slice(0,10)}T${dateString.timeStamp.slice(11)}`);
 }
 
 /**
+ * getLogHeader
  * Function to build the headers for the event log consistently.
  * @returns {div} headerDiv div DOM object containing the headers.
  */
@@ -209,10 +220,13 @@ function getLogHeader(){
     headerDiv.classList.add("logEntry", "logHeader");
     return headerDiv;
 }
+
 /**
  * Get Log Status
  * Pass the log entry object (Line from array retrieved from API) and
  * return the Element to place in the log display for the status field.
+ * @param {object} logEntry a logEntry Object pulled from the API
+ * @returns DOM SELECT object populated with the correct status for the log entry
  */
 function getLogStatus(logEntry){
     selectVar = document.createElement("select");
@@ -300,7 +314,6 @@ function getLogStatus(logEntry){
  * @returns Input Field for controlling the Notes from the Log Entry element provided
  */
 function getLogNotes(logEntry){
-    console.log('LogEntry: ',logEntry);
     thisUpdateButton = document.getElementById(`updateButton${logEntry.id}`);
     thisCancelButton = document.getElementById(`cancelButton${logEntry.id}`);
     const noteInput = document.createElement('input');
@@ -320,6 +333,7 @@ function getLogNotes(logEntry){
 /**
  * Populate Log.
  * Get the data from the log retrieved from the API and populate it on the Page
+ * This is the workhorse of the site.
  */
 function popLog(){
     logDisplay = document.getElementById('div_logDisplay');
@@ -400,9 +414,7 @@ function popLog(){
                 thisLogEntry.Closed = `${timeStampDate} ${timeStampTime}`;
             }
 
-            console.log("thisLogEntry: ", thisLogEntry);
             const bodyData = JSON.stringify(thisLogEntry);
-            console.log('Body Data', bodyData);
             try{
             const response = await fetch(`${logAPI_URL}/${logEntry.id}`,{
                 method: 'PUT',
@@ -412,7 +424,6 @@ function popLog(){
                     body: bodyData
                 });
             const data = await response.json();
-            console.log("Data Updated:",data);
             thisUpdateButton.classList.add("hidden");
             thisCancelButton.classList.add("hidden");
             } catch (error) {
@@ -482,8 +493,11 @@ function popLog(){
 
 /**
  * getNewAutoLogEntries
- * Iterate through the Production Data for today and evaluate if a new
- * Log entry is to be automatically created.
+ * Iterate through the Production Data for today (Up until now - defined by global variables) 
+ * and evaluate if a new Log entry is to be automatically created.
+ * If so - it will build an array of entries to create in JSON format and call
+ * the async function {@linkcode createLogEntries()}to create them and populate the API.
+ * If Not - will just populate the existing log onto the page via {@linkcode popLog()}
  */
 function getNewAutoLogEntries(){
     let yieldLimit = 0;
@@ -524,6 +538,16 @@ function getNewAutoLogEntries(){
         popLog();
 }
 
+/**
+ * createLogEntries
+ * Initally had issues with Asynchronous calling of the creation of the API's within this function
+ * so the calling itself takes place inside {@linkcode createLogEntry()}
+ * This function will assemble the entry to be created but check against the existing list of log entries
+ * to determine if it has already been created.
+ * If so; it will call {@linkcode createLogEntry()} and wait for completion before moving to the next hour.
+ * If not; it will complete the loop and move to the next hour to check 
+ * @param {Object[]} hourEntries an array of hour entries in JSON format that includes the Hour Entry Object itself and the type of event to be created.
+ */
 async function createLogEntries(hourEntries){
     for(const hourEntry of hourEntries){ // This caused no end of pain and misery.
         // had used a foreach but the foreach was firing off the async functions simultaeneously
@@ -544,17 +568,26 @@ async function createLogEntries(hourEntries){
 
         // length = 0 => none exist
         if(existingEntries.length===0){
-            console.log(`new Log Entry: ${JSON.stringify(newLogEntry)}`);
             const result = await createLogEntry(newLogEntry);
             //await delay(1000); // delay before continuing
         }
     }
     // API Data source has been updated - get the new Data before running poplog
     // and displaying the event log.
+    // If this is not performed, the event log will only display previously created 
+    // entries
     apiObj = await getData();
     popLog();
 }
 
+/**
+ * createLogEntry
+ * an Asycnchronous function that takes the logEntry parameter passed and
+ * and posts it to the API link containing the log events.
+ * 
+ * @param {Object} logEntry a JSON object for the log entry to be created.
+ * @returns TRUE if successful, FALSE if not.
+ */
 async function createLogEntry(logEntry){
     try{
         let bodyString = JSON.stringify(logEntry);
@@ -566,7 +599,6 @@ async function createLogEntry(logEntry){
             body: bodyString
             });
         const data = await response.json();
-        console.log(`created new entry: ${JSON.stringify(data)}`);
         return true;
         } catch(error) {
             console.error(`Error posting Data: ${bodyString}`);
