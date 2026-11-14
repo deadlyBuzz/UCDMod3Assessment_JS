@@ -73,11 +73,6 @@ async function getData(){
         const logData = await logResponse.json();
         const settingsResponse = await fetch(settingsAPI_URL);
         const settingsData = await settingsResponse.json();
-        // now have the API Data stored in local variables, store in a new object and return
-        // prodData has data based on a fixed date.  To update this for a clean simulation, we need to change the following.
-        // 2026-10-23 --> Today
-        // 2026-10-22 --> Yesterday
-        // 2026-10-24 --> Day before
         const retObj = {
             "prodData": prodData,
             "logData":logData,
@@ -107,6 +102,7 @@ async function initPage(){
  * Populate the chart with the data from API production data.
  * Code and Examples from: https://www.w3schools.com/js/tryit.asp?filename=tryai_chartjs_lines
  * and https://www.w3schools.com/ai/ai_chartjs.asp used for reference to build chart population.
+ * https://www.chartjs.org/docs/latest/samples/other-charts/combo-bar-line.html
  */
 function popChart(){
      
@@ -217,7 +213,7 @@ function getLogHeader(){
         thisSpan.classList.add(headerLabel.style);        
         headerDiv.appendChild(thisSpan);
     });
-    headerDiv.classList.add("logEntry", "logHeader");
+    headerDiv.classList.add("logHeader");
     return headerDiv;
 }
 
@@ -320,6 +316,12 @@ function getLogNotes(logEntry){
     noteInput.setAttribute('type', 'text');
     noteInput.setAttribute('id',"inputField"+logEntry.id);
     noteInput.value = logEntry.Notes
+    
+    /* I'm aware there is no validation taking place here as there is on the new 
+    log entry form but I've only seen it now and don't have the time to fix this before 
+    submission.
+    Consider it a `feature`? 
+    Alan*/
     noteInput.addEventListener("change", () => {
         thisUpdateButton = document.getElementById(`updateButton${logEntry.id}`);
         thisCancelButton = document.getElementById(`cancelButton${logEntry.id}`);

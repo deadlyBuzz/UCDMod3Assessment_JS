@@ -50,14 +50,25 @@ span{
     margin-left: 10px;
     padding: 5px;
     border: #0D131A solid 1px;
+    background-color: #FFD4000A;
     border-radius: 3px;
     width: 95%;
     justify-content: flex-start;
 }
+.logEntry:hover{
+    background-color: #525F701F;
+}
 
 .logHeader{
+    display:flex;
+    margin-left: 10px;
+    padding: 5px;
+    border: #0D131A solid 1px;
     background-color: #0D131A;
-    color: #F9FAFB
+    color: #F9FAFB;
+    border-radius: 3px;
+    width: 95%;
+    justify-content: flex-start;
 }
 
 .logData{
