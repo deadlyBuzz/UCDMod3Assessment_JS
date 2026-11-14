@@ -7,28 +7,43 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>New Manual log</h1>
     <main>
-        <form id="newLogEntryForm">
-            <label for="logEntryType"></label>
-            <select name="logEntryType" id="logEntryType">
-                <option value="" selected>Please select a category</option>
-                <option value="Downtime">Downtime</option>
-                <option value="Safety">Safety</option>
-                <option value="Yield">Yield</option>
-                <option value="Cycletime">Cycletime</option>
-                <option value="Output">Output</option>
-            </select>
-            <label for="logEntryStatus"></label>
-            <select name="logEntryStatus" id="logEntryStatus">
-                <option value="Open" selected>Open</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Closed">Closed</option>
-            </select>
-            <label for="logEntryNotes"></label>
-            <input type="text" name="logEntryNotes" id="logEntryNotes" placeholder="Enter Notes or Skip if unavailable">
-            <button id="submitButton" type="submit">Create Log Entry</button>
-            <button id="cancelButton" type="submit">Cancel</button>
+        <form id="newLogEntryForm" class="formContainer">
+            <div class="formSegment">
+                <h1>New Manual log</h1>
+                <p>Enter the details to manually create a new log entry</p>
+            </div>
+            <div class="formSegment">
+                <label for="logEntryType">Type</label>
+                <select name="logEntryType" id="logEntryType">
+                    <option value="" selected>Please select a category</option>
+                    <option value="Downtime">Downtime</option>
+                    <option value="Safety">Safety</option>
+                    <option value="Yield">Yield</option>
+                    <option value="Cycletime">Cycletime</option>
+                    <option value="Output">Output</option>
+                </select>
+                <small id="typeHelp">Select the Event Type from the Dropdown.</small>
+            </div>
+            <div class="formSegment">
+                <label for="logEntryStatus">Status</label>
+                <select name="logEntryStatus" id="logEntryStatus">
+                    <option value="Open" selected>Open</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Closed">Closed</option>
+                </select>
+                <small id="statusHelp">Select the Status of the event from the Dropdown</small>
+            </div>
+            <div class="formSegment">
+                <label for="logEntryNotes">Notes</label>
+                <input type="text" name="logEntryNotes" id="logEntryNotes" placeholder="Enter Notes or Skip if unavailable">
+                <small id="notesHelp">Enter Notes describing the event<br/>
+                The Characters &#123; &#125; &#95; and  &#42; are not allowed.</small>
+            </div>
+            <div class="formSegment">
+                <button id="submitButton" type="submit">Create Log Entry</button>
+                <button id="cancelButton" type="submit">Cancel</button>
+            </div>
         </form>
         <div class="errorDisplay">
             <ul id="errorDisplay"></ul>
