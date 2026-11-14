@@ -393,7 +393,7 @@ function popLog(){
         const updateButton = document.createElement("button");
         //if(logEntry.Status === "Closed") updateButton.classList.add("hidden");
         //updateButton.classList.add("btn-54");
-        updateButton.classList.add("hidden");
+        updateButton.classList.add("hidden", "startButton");
         updateButton.setAttribute('data-logentry',logEntry.id);
         updateButton.setAttribute('id',`updateButton${logEntry.id}`);
         updateButton.textContent = 'Update';
@@ -436,7 +436,7 @@ function popLog(){
         }); 
 
         const cancelButton = document.createElement("button");
-        cancelButton.classList.add("hidden");
+        cancelButton.classList.add("hidden", "endButton");
         cancelButton.setAttribute('data-logentry',logEntry.id);
         cancelButton.setAttribute('id',`cancelButton${logEntry.id}`);
         cancelButton.textContent = 'Cancel';
@@ -482,6 +482,7 @@ function popLog(){
     });
     newButton = document.createElement("button");
     newButton.innerText = "New log Entry";
+    newButton.classList.add("soloButton");
     newButton.addEventListener("click", (event) =>{
         event.preventDefault();
         location.replace("./newlogentry.html");

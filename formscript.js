@@ -82,6 +82,7 @@ submitButton.addEventListener('click', async (event) => {
         location.replace("./index.html");
     }
 });
+setEventListeners();
 
 function showError(errorMessage){
     newMessage = document.createElement('li');
@@ -101,4 +102,44 @@ function clearForm(){
     document.getElementById('logEntryType').value = "";
     document.getElementById('logEntryStatus').value = "Open";
     document.getElementById('logEntryNotes').innerText = "";
+}
+
+/**
+ * Get Log Status
+ * Populate the styled select variable for the Log Entry.
+ */
+function setEventListeners(){
+    statusSel = document.getElementById("logEntryStatus");
+    statusSel.addEventListener("change", () => {
+        switch(statusSel.value){
+            case 'Closed':
+                statusSel.classList.remove("logStatus-inProgress");
+                statusSel.classList.remove("logStatus-open");
+                statusSel.classList.add("logStatus-closed");
+                break;
+            case 'In progress':
+                statusSel.classList.remove("logStatus-open");
+                statusSel.classList.remove("logStatus-closed");
+                statusSel.classList.add("logStatus-inProgress");
+                break;
+            default:
+                statusSel.classList.remove("logStatus-inProgress");
+                statusSel.classList.remove("logStatus-closed");
+                statusSel.classList.add("logStatus-open");
+        }
+    });
+
+    typeSel = document.getElementById("logEntryType");
+    typeSel.addEventListener("change", () => {
+        // Remove all other classes.
+        typeSel.classList.remove(
+            "logType-downtime",
+            "logType-safety",
+            "logType-yield",
+            "logType-cycletime",
+            "logType-output"
+        );
+        typeSel.classList.add(`logType-${typeSel.value.toLowerCase()}`, `custom-select`)        
+    });
+    
 }

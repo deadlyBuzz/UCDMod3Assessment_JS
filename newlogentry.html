@@ -15,22 +15,22 @@
             </div>
             <div class="formSegment">
                 <label for="logEntryType">Type</label>
-                <select name="logEntryType" id="logEntryType">
-                    <option value="" selected>Please select a category</option>
-                    <option value="Downtime">Downtime</option>
-                    <option value="Safety">Safety</option>
-                    <option value="Yield">Yield</option>
-                    <option value="Cycletime">Cycletime</option>
-                    <option value="Output">Output</option>
+                <select name="logEntryType" id="logEntryType" class="custom-select">
+                    <option value="" selected><span>Please select a category</span></option>
+                    <option value="Downtime"><span class="logType-downtime">Downtime</span></option>
+                    <option value="Safety"><span class="logType-safety">Safety</span></option>
+                    <option value="Yield"><span class="logType-yield">Yield</span></option>
+                    <option value="Cycletime"><span class="logType-cycletime">Cycletime</span></option>
+                    <option value="Output"><span class="logType-output">Output</span></option>
                 </select>
                 <small id="typeHelp">Select the Event Type from the Dropdown.</small>
             </div>
             <div class="formSegment">
                 <label for="logEntryStatus">Status</label>
-                <select name="logEntryStatus" id="logEntryStatus">
-                    <option value="Open" selected>Open</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Closed">Closed</option>
+                <select name="logEntryStatus" id="logEntryStatus" class="custom-select logStatus-open">
+                    <option value="Open" selected><span class="logStatus-open">Open</span></option>
+                    <option value="In progress"><span class="logStatus-inProgress">In Progress</span></option>
+                    <option value="Closed"><span class="logStatus-closed">Closed</span></option>
                 </select>
                 <small id="statusHelp">Select the Status of the event from the Dropdown</small>
             </div>
@@ -40,9 +40,9 @@
                 <small id="notesHelp">Enter Notes describing the event<br/>
                 The Characters &#123; &#125; &#95; and  &#42; are not allowed.</small>
             </div>
-            <div class="formSegment">
-                <button id="submitButton" type="submit">Create Log Entry</button>
-                <button id="cancelButton" type="submit">Cancel</button>
+            <div>
+                <button id="submitButton" type="submit" class="startButton">Create Log Entry</button>
+                <button id="cancelButton" type="submit" class="endButton">Cancel</button>
             </div>
         </form>
         <div class="errorDisplay">
