@@ -183,6 +183,7 @@ button{
     padding-left: 10px;
     padding-right: 10px;
     margin-inline: 3px;
+    max-height: 33px;
 }
 .soloButton{
     border-radius: 30px;
@@ -194,42 +195,6 @@ button{
 .endButton{
     border-top-right-radius: 30px;
     border-bottom-right-radius: 30px;
-}
-
-.btn-54 {
-    position: relative;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #111111;
-    outline: none;
-    display: inline-block;
-    user-select: none;
-    font-size: 18px;
-    /* padding: 12px 32px; */
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border-radius: 50px;
-    /*** full width block ***/
-    /* width: 100%; */
-}
-
-.btn-54-colors {
-    color: #2e2e2e;
-    border: 2px solid transparent;
-    background-image: linear-gradient(#ffffff, #ffffff), radial-gradient(circle at left top, #00BCD4, #E91E63);
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-}
-
-.btn-54:hover {
-    box-shadow: #00bcd491 0px 0px 20px 0px;
-}
-
-.btn-54:disabled {
-    pointer-events: none;
-    opacity: .65;
-    color: #7e7e7e;
-    background: #dcdcdc;
-    box-shadow: none;
 }
 
 .formContainer{
@@ -276,4 +241,23 @@ button{
     display: block;
     margin-top: 0px;
     margin-bottom: 8px;
+}
+
+.errorDisplay{
+    border-radius: 30px;
+    color:darkred;
+    background-color:rgb(255, 203, 203);
+    padding: 3px;
+}
+
+@media (max-width: 1264px){
+    .logNote{
+        width: 40%;
+    }
+}
+
+@media (max-width: 800px){
+    .logNote{
+        width: 30%;
+    }
 }

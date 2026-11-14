@@ -8,6 +8,7 @@ cancelButton.addEventListener('click', (event)=>{
 });
 
 const errorDisplay = document.getElementById('errorDisplay');
+const errorDisplayDiv = document.getElementById('errorDisplayDiv');
 clearForm();
 // define the submit button to create the log entry based on the data on the form.
 submitButton = document.getElementById('submitButton');
@@ -37,7 +38,7 @@ submitButton.addEventListener('click', async (event) => {
     newLogEntry.TimeStamp = `${timeStampDate} ${timeStampTime}`;
 
     const entryStatus = document.getElementById('logEntryStatus');
-    const validEntryStatus = /(Open|In Progress|Closed)/;
+    const validEntryStatus = /(Open|In progress|Closed)/;
     if (validEntryStatus.test(entryStatus.value))
         newLogEntry.Status = entryStatus.value;
     else{
@@ -88,13 +89,13 @@ function showError(errorMessage){
     newMessage = document.createElement('li');
     newMessage.innerText = errorMessage;
     errorDisplay.appendChild(newMessage);
-    if (errorDisplay.classList.contains("hidden"))
-        errorDisplay.classList.remove("hidden");
+    if (errorDisplayDiv.classList.contains("hidden"))
+        errorDisplayDiv.classList.remove("hidden");
 }
 
 function clearErrors(){
-    if (!errorDisplay.classList.contains("hidden"))
-        errorDisplay.classList.add("hidden");
+    if (!errorDisplayDiv.classList.contains("hidden"))
+        errorDisplayDiv.classList.add("hidden");
     errorDisplay.innerHTML = "";
 }
 

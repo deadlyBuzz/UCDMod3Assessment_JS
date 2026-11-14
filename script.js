@@ -12,7 +12,6 @@ now.setFullYear(start.getFullYear());
 now.setMilliseconds(0);
 now.setSeconds(0);
 now.setMinutes(0);
-now.setHours(22); //<<<< For testing, Remove.
 const yesterday = new Date(start);
 yesterday.setDate(yesterday.getDate() - 1);
 const dayBefore = new Date(yesterday);
@@ -58,17 +57,6 @@ class ProductionHour {
     }
 }
 
-/**
- * delay
- * Taken from Sample https://dev.to/zxce3/implementing-delaysleep-in-javascript-with-promises-and-asyncawait-264
- * to try to resolve the issue with Duplicate ID entries in mockAPI
- * 
- * @param {number} ms 
- * @returns 
- */
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 /** getData()
  *Get the Data from the API for both the Production Data, and the Log Data.
@@ -115,7 +103,6 @@ async function initPage(){
  * Populate the chart with the data from API production data.
  * Code and Examples from: https://www.w3schools.com/js/tryit.asp?filename=tryai_chartjs_lines
  * and https://www.w3schools.com/ai/ai_chartjs.asp used for reference to build chart population.
- * <<<< TODO: Add ref for Google
  */
 function popChart(){
      
@@ -146,7 +133,7 @@ function popChart(){
         const thisData = apiDataToDateObj(hourData);
         if ( thisData.getTime() < shiftEnd.getTime() && thisData.getTime() >= shiftStart.getTime()){
             chartLabels.push(thisData.toLocaleString());
-            if((thisData.getTime() < now.getTime())||true){ // Todo: Debug - remove when complete.<<<<
+            if(thisData.getTime() < now.getTime()){ // Todo: Debug - remove when complete.<<<<
                 chartData.push(hourData.output);
                 // create a production hour and add it to the current shift info.
                 thisShiftProdNos.push(new ProductionHour(hourData));
@@ -488,6 +475,7 @@ function popLog(){
         location.replace("./newlogentry.html");
     });
     const logControls = document.getElementById("div_logControls");
+    logControls.innerHTML = "";
     logControls.appendChild(newButton);
 
 }
@@ -530,7 +518,10 @@ function getNewAutoLogEntries(){
         if(hourData.isUptimeEvent(uptimeLimit)) hoursToLog.push({"hourData":hourData, "type":"Downtime"});       
         if(hourData.isCycleTimeEvent(cycletimeUpperLimit, cycletimeLowerLimit)) hoursToLog.push({"hourData":hourData, "type":"Cycle Time"});
     });
-    if(hoursToLog.length > 0) createLogEntries(hoursToLog);
+    if(hoursToLog.length > 0) 
+        createLogEntries(hoursToLog);
+    else
+        popLog();
 }
 
 async function createLogEntries(hourEntries){
@@ -543,7 +534,7 @@ async function createLogEntries(hourEntries){
         const newLogEntry = {"TimeStamp": hourEntry.hourData.timeStamp,
             "Type": hourEntry.type,
             "Status": "Open",
-            "Notes": "Auto Created",
+            "Notes": "Auto Created - please update",
             "Closed": "",
         }
         // get a list of entries with the same timestamp and type
